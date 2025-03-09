@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ChromeExtensio.nNewTabOverride.Redefined": {
+    "ChromeExtension.NewTabOverride.Redefined": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -72,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "ChromeExtensio.nNewTabOverride.Redefined:build:production"
+              "buildTarget": "ChromeExtension.NewTabOverride.Redefined:build:production"
             },
             "development": {
-              "buildTarget": "ChromeExtensio.nNewTabOverride.Redefined:build:development"
+              "buildTarget": "ChromeExtension.NewTabOverride.Redefined:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -12,11 +12,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { context, github } = require('@actions/github');
-
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const pull_number = context.payload.pull_request.number;
+            const { owner, repo } = github.context.repo;
+            const pull_number = github.context.payload.pull_request.number;
 
             // Get the pull request details
             const { data: pullRequest } = await github.rest.pulls.get({

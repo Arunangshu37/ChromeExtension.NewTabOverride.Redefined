@@ -1,0 +1,34 @@
+name: Enforce Issue Linking
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  enforce-issue-linking:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for Issue References
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let isLinked=false;
+            let pull = await github.issues.listEvents({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number
+            });
+            if(pull.data){
+              pull.data.forEach(item => {
+                if (item.event == "connected"){
+                  isLinked = true;
+                }
+              });
+            }
+            if(isLinked){
+              console.log("Success! Linked Issue Found!");
+            }
+            else{
+              console.log("No Linked Issue Found!");
+              core.setFailed("No Linked Issue Found!");
+            }

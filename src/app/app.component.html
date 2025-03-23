@@ -1,0 +1,61 @@
+<div class="container-fluid px-5 h-100 d-flex flex-column justify-content-center">
+  <div class="row flex-1 m-5 py-5">
+    <div class="col-xl-6">
+      <mat-card appearance="outlined" class="h-100 p-2">
+        <mat-card-header>
+          <h3>Saved links</h3>
+        </mat-card-header>
+        <mat-card-content>
+          <button mat-stroked-button class="p-5 border-radius-10px" >
+            <span class="material-symbols-outlined icon-60px">add</span>
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-xl-5">
+      <mat-card appearance="outlined" class="h-100 ">
+        <mat-card-header>
+          <div class="row w-100 d-flex">
+            <span class="d-flex justify-content-between">
+              <h3 class="my-auto">Quick notes</h3>
+              <button mat-icon-button class="my-auto">
+                <mat-icon class="material-symbols-outlined">delete</mat-icon>
+              </button>
+            </span>
+            <mat-form-field appearance="outline" class="mt-2">
+              <mat-label>Outline form field</mat-label>
+              <input matInput  placeholder="search here " [formControl]="searchQueryInput">
+              <mat-icon matSuffix class="material-symbols-outlined">search</mat-icon>
+            </mat-form-field>
+
+          </div>
+        </mat-card-header>
+        <mat-divider />
+        <mat-card-content class="flex-1 pt-4">
+          <input type="hidden" [value]="idOfSelectedQuickNote()">
+          <textarea matInput placeholder="Ex. It makes me feel..." class="quick-note-textarea " [formControl]="quickNoteInput"></textarea>
+        </mat-card-content>
+        <mat-divider />
+        <mat-card-footer class="d-flex justify-content-between">
+          <div class="process-saving-indicator-section d-flex p-3">
+            @if(isSaving === quickNoteSaveStates.Saving) {
+              <span class="my-auto">saving...</span>
+              <mat-spinner diameter="20" class="my-auto ms-2"></mat-spinner>
+            }
+            @else if(isSaving === quickNoteSaveStates.Saved) {
+              <span class="my-auto">saved</span>
+              <div class="round-check-success my-auto ms-3" ><span>✓</span></div>
+            }
+          </div>
+          <div class="pagination-section d-flex p-3">
+            <span class="my-auto">
+              {{displayQuickNotePositionText()}}
+            </span>
+            <button mat-icon-button (click)="navigateThroughQuickNotes(currentIndex() - 1)" [disabled]="isPrevButtonDisabled()"><mat-icon class="material-symbols-outlined">arrow_back_ios</mat-icon></button>
+            <button mat-icon-button (click)="navigateThroughQuickNotes(currentIndex() + 1)" [disabled]="isNextButtonDisabled()"><mat-icon class="material-symbols-outlined">arrow_forward_ios</mat-icon></button>
+          </div>
+        </mat-card-footer>
+      </mat-card>
+    </div>
+  </div>
+</div>

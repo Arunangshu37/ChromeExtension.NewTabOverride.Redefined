@@ -12,20 +12,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { owner, repo } = github.context.repo;
-            const pull_number = github.context.payload.pull_request.number;
-
-            // Get the pull request details
-            const { data: pullRequest } = await github.rest.pulls.get({
-              owner,
-              repo,
-              pull_number,
-            });
-
-            // Check if there are any linked issues
-            const linkedIssues = pullRequest.issue_url;
-            if (linkedIssues) {
-              console.log(`Linked issues found: ${linkedIssues}`);
-            } else {
-              console.log(`No linked issues found for pull request #${pull_number}`);
-            }
+            github.rest.issues.get({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            })

@@ -3,6 +3,7 @@ name: Enforce Issue Linking
 on:
   pull_request:
     types: [opened, edited, synchronize]
+  workflow_dispatch:
 
 jobs:
   enforce-issue-linking:

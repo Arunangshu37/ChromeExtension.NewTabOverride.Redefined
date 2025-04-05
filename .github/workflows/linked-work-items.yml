@@ -1,6 +1,8 @@
 name: Enforce Issue Linking
 
-on: workflow_dispatch
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
 
 jobs:
   enforce-issue-linking:
@@ -19,3 +21,4 @@ jobs:
             })
 
             console.log(x);
+            console.log(JSON.stringify(x))

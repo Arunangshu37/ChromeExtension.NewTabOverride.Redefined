@@ -14,7 +14,7 @@ jobs:
           script: |
             console.log(context);
 
-            var x = github.rest.issues.get({
+            var x = await github.rest.issues.get({
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,

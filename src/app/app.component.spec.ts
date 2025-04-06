@@ -5,15 +5,25 @@ import { AppModule } from './app.module';
 import { LocalStorageTransactionService } from './services/local-storage-transaction.service';
 import { QuickNote, QuickNoteSaveStates } from './models/quick-notes.models';
 import { timeToWaitForNextKeyStrokeInMilliseconds } from '../shared/constants';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DialogViewComponent } from '../shared/components/dialog-view/dialog-view.component';
+import { of } from 'rxjs';
+import { DialogTypes } from '../shared/models/dialog-types.enum';
+import { DialogData } from '../shared/models/dialog-data.model';
 
 describe('AppComponent', () => {
-  let localStorageTransactionServiceMock: jasmine.SpyObj<LocalStorageTransactionService>;
+  let mockLocalStorageTransactionService: jasmine.SpyObj<LocalStorageTransactionService>;
+  let mockMatDialog: jasmine.SpyObj<MatDialog>;
+  let mockMatDialogRef: jasmine.SpyObj<MatDialogRef<DialogViewComponent>>;
   beforeEach(async () => {
-    localStorageTransactionServiceMock = jasmine.createSpyObj<LocalStorageTransactionService>('LocalStorageTransactionService', [
+    mockMatDialog = jasmine.createSpyObj(MatDialog, ['open']);
+    mockMatDialogRef = jasmine.createSpyObj(MatDialogRef, ['afterClosed'])
+    mockLocalStorageTransactionService = jasmine.createSpyObj<LocalStorageTransactionService>('LocalStorageTransactionService', [
       'initializeLocalStorage',
       'getQuickNoteBasedOnIndexWithTotalCount',
       'saveQuickNote',
       'getDataFromLocalStorage',
+      'deleteQuickNote'
     ]);
     await TestBed.configureTestingModule({
       imports: [
@@ -22,7 +32,13 @@ describe('AppComponent', () => {
       ],
       providers: [
         {
-          provide: LocalStorageTransactionService, useValue: localStorageTransactionServiceMock
+          provide: LocalStorageTransactionService, useValue: mockLocalStorageTransactionService
+        },
+        {
+          provide: MatDialog, useValue: mockMatDialog
+        },
+        {
+          provide: MatDialogRef, useValue: mockMatDialogRef
         }
       ]
     }).compileComponents();
@@ -39,13 +55,13 @@ describe('AppComponent', () => {
     const testVal = 'Test quick note';
     const idOfQuickNote = new Date().getTime();
     const app = fixture.componentInstance;
-    localStorageTransactionServiceMock.initializeLocalStorage.and.callThrough();
-    localStorageTransactionServiceMock.getQuickNoteBasedOnIndexWithTotalCount.and.returnValue({
+    mockLocalStorageTransactionService.initializeLocalStorage.and.callThrough();
+    mockLocalStorageTransactionService.getQuickNoteBasedOnIndexWithTotalCount.and.returnValue({
       count: 0,
       index: 0,
       quickNote: null
     })
-    localStorageTransactionServiceMock.saveQuickNote.withArgs(new QuickNote(testVal, 0)).and.returnValue({
+    mockLocalStorageTransactionService.saveQuickNote.withArgs(new QuickNote(testVal, 0)).and.returnValue({
       count: 1,
       quickNote: {
         id: idOfQuickNote,
@@ -79,13 +95,13 @@ describe('AppComponent', () => {
       note: 'T35T Quick note'
     };
     // this is the last selected quick not we would get here.
-    localStorageTransactionServiceMock.getQuickNoteBasedOnIndexWithTotalCount.and.returnValue({
+    mockLocalStorageTransactionService.getQuickNoteBasedOnIndexWithTotalCount.and.returnValue({
       count: 2,
       index: 1,
       quickNote: randomQuickNote
     });
     const app = fixture.componentInstance;
-    localStorageTransactionServiceMock.getDataFromLocalStorage.and.returnValue({
+    mockLocalStorageTransactionService.getDataFromLocalStorage.and.returnValue({
       appName: '',
       quickNotes: [
         {
@@ -115,7 +131,7 @@ describe('AppComponent', () => {
   it('should reset the quick notes list and count when the search field is made empty', fakeAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    localStorageTransactionServiceMock.getQuickNoteBasedOnIndexWithTotalCount.withArgs().and.returnValue({
+    mockLocalStorageTransactionService.getQuickNoteBasedOnIndexWithTotalCount.withArgs().and.returnValue({
       count: 3,
       index: 1,
       quickNote : {
@@ -138,7 +154,7 @@ describe('AppComponent', () => {
   it('should quick note not get saved when quickNoteInput is left blank', fakeAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    localStorageTransactionServiceMock.getQuickNoteBasedOnIndexWithTotalCount.and.returnValue({
+    mockLocalStorageTransactionService.getQuickNoteBasedOnIndexWithTotalCount.and.returnValue({
       index: 2,
       count: 3,
       quickNote: {
@@ -163,7 +179,7 @@ describe('AppComponent', () => {
       const fixture = TestBed.createComponent(AppComponent);
       const app = fixture.componentInstance;
       const testVal = 'test note';
-      localStorageTransactionServiceMock.getQuickNoteBasedOnIndexWithTotalCount.withArgs(1, undefined).and.returnValue({
+      mockLocalStorageTransactionService.getQuickNoteBasedOnIndexWithTotalCount.withArgs(1, undefined).and.returnValue({
         count: 2,
         index: 1,
         quickNote: {
@@ -192,7 +208,7 @@ describe('AppComponent', () => {
           note: 'test some other value'
         }
       ]);
-      localStorageTransactionServiceMock.getQuickNoteBasedOnIndexWithTotalCount
+      mockLocalStorageTransactionService.getQuickNoteBasedOnIndexWithTotalCount
         .withArgs(2, app.quickNotesClone())
         .and
         .returnValue({
@@ -203,14 +219,14 @@ describe('AppComponent', () => {
 
       app.navigateThroughQuickNotes(2);
 
-      expect(localStorageTransactionServiceMock.getQuickNoteBasedOnIndexWithTotalCount).toHaveBeenCalledWith(2, app.quickNotesClone());
+      expect(mockLocalStorageTransactionService.getQuickNoteBasedOnIndexWithTotalCount).toHaveBeenCalledWith(2, app.quickNotesClone());
     });
 
     it('should set id of quickNote to 0 when the index to load is exceeding the total count of the quickNotes', () => {
       const fixture = TestBed.createComponent(AppComponent);
       const app = fixture.componentInstance;
       const testVal = 'test note';
-      localStorageTransactionServiceMock.getQuickNoteBasedOnIndexWithTotalCount.withArgs(3, undefined).and.returnValue({
+      mockLocalStorageTransactionService.getQuickNoteBasedOnIndexWithTotalCount.withArgs(3, undefined).and.returnValue({
         count: 3,
         index: 2,
         quickNote: {
@@ -226,4 +242,32 @@ describe('AppComponent', () => {
     });
   });
 
+  it('should set quick note data to ui after delete operation is successful', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+
+    mockMatDialogRef.afterClosed.and.returnValue(of(true));
+    mockMatDialog.open.withArgs(DialogViewComponent, {
+      data: {
+        dialogType: DialogTypes.Confirmation,
+        dialogTitle: 'Delete quick note',
+        dialogText: 'Are you sure you want to delete this quick note?',
+        dialogActionRecord: {
+          positiveConfirmation: 'Yes',
+          negativeConfirmation: 'No'
+        }
+      }
+    }).and.returnValue(mockMatDialogRef);
+    mockLocalStorageTransactionService.getQuickNoteBasedOnIndexWithTotalCount.and.returnValue({
+      count: 0,
+      quickNote: null,
+      index: -1
+    });
+
+    app.openDeleteQuickNoteModal();
+
+    expect(app.currentIndex()).toEqual(-1);
+    expect(app.idOfSelectedQuickNote()).toEqual(0);
+    expect(app.displayQuickNotePositionText()).toEqual('0/0');
+  });
 });

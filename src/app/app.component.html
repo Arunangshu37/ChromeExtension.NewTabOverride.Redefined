@@ -18,12 +18,12 @@
           <div class="row w-100 d-flex">
             <span class="d-flex justify-content-between">
               <h3 class="my-auto">Quick notes</h3>
-              <button mat-icon-button class="my-auto">
+              <button mat-icon-button class="my-auto" (click)="openDeleteQuickNoteModal()" [disabled]="noMoreQuickNotesToShow()">
                 <mat-icon class="material-symbols-outlined">delete</mat-icon>
               </button>
             </span>
             <mat-form-field appearance="outline" class="mt-2">
-              <mat-label>Outline form field</mat-label>
+              <mat-label>Start typing to search your quick notes.</mat-label>
               <input matInput  placeholder="search here " [formControl]="searchQueryInput">
               <mat-icon matSuffix class="material-symbols-outlined">search</mat-icon>
             </mat-form-field>
@@ -52,7 +52,7 @@
               {{displayQuickNotePositionText()}}
             </span>
             <button mat-icon-button (click)="navigateThroughQuickNotes(currentIndex() - 1)" [disabled]="isPrevButtonDisabled()"><mat-icon class="material-symbols-outlined">arrow_back_ios</mat-icon></button>
-            <button mat-icon-button (click)="navigateThroughQuickNotes(currentIndex() + 1)" [disabled]="isNextButtonDisabled()"><mat-icon class="material-symbols-outlined">arrow_forward_ios</mat-icon></button>
+            <button mat-icon-button (click)="navigateThroughQuickNotes(currentIndex() + 1)" [disabled]="noMoreQuickNotesToShow()"><mat-icon class="material-symbols-outlined">arrow_forward_ios</mat-icon></button>
           </div>
         </mat-card-footer>
       </mat-card>

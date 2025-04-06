@@ -1,0 +1,10 @@
+@if(dialogData.dialogType === dialogTypes.Confirmation) {
+  <h2 mat-dialog-title>{{ dialogData.dialogTitle }}</h2>
+  <mat-dialog-content>
+    {{ dialogData.dialogText }}
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="confirmAndCloseDialog(true)">{{ dialogData.dialogActionRecord?.['positiveConfirmation'] }}</button>
+    <button mat-button (click)="confirmAndCloseDialog(false)" cdkFocusInitial>{{ dialogData.dialogActionRecord?.['negativeConfirmation'] }}</button>
+  </mat-dialog-actions>
+}

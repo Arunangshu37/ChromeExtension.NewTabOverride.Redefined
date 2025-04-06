@@ -5,6 +5,10 @@ import { assigned } from '../shared/utils';
 import { QuickNote, QuickNoteSaveStates } from './models/quick-notes.models';
 import { LocalStorageTransactionService } from './services/local-storage-transaction.service';
 import { timeToWaitForNextKeyStrokeInMilliseconds } from '../shared/constants';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogViewComponent } from '../shared/components/dialog-view/dialog-view.component';
+import { DialogTypes } from '../shared/models/dialog-types.enum';
+import { DialogData } from '../shared/models/dialog-data.model';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +22,7 @@ export class AppComponent implements OnInit {
   public quickNoteInput = new FormControl('');
   public searchQueryInput = new FormControl('');
   public readonly isPrevButtonDisabled = computed(() => this.currentIndex() <= 0);
-  public readonly isNextButtonDisabled = computed(() => ((this.currentIndex() + 1) > this.totalQuickNotes()));
+  public readonly noMoreQuickNotesToShow = computed(() => ((this.currentIndex() + 1) > this.totalQuickNotes()));
   public readonly displayQuickNotePositionText = signal('000/000');
   public readonly currentIndex = signal(-1);
   public readonly totalQuickNotes = signal(-1);
@@ -26,16 +30,17 @@ export class AppComponent implements OnInit {
   public readonly quickNotesClone = signal<QuickNote[]>([]);
 
   private readonly localStorageTransactionService = inject(LocalStorageTransactionService);
+  private readonly matDialog = inject(MatDialog);
 
   public ngOnInit(): void {
     this.localStorageTransactionService.initializeLocalStorage();
     this.initializeQuickNoteValueChangeAction();
     this.initializeSearchQueryValueChangeAction();
-
     this.setDefaultQuickNoteData();
   }
 
   public navigateThroughQuickNotes(indexToGo: number) {
+    this.isSaving = QuickNoteSaveStates.None;
     const { index, quickNote, count} = this.localStorageTransactionService.getQuickNoteBasedOnIndexWithTotalCount(
       indexToGo,
       this.quickNotesClone().length !== 0 ? this.quickNotesClone() : undefined
@@ -46,6 +51,28 @@ export class AppComponent implements OnInit {
     if(indexToGo === count) {
       this.setQuickNoteData(0, indexToGo, '')
     }
+  }
+
+  public openDeleteQuickNoteModal() {
+    const matDialogRef = this.matDialog.open(DialogViewComponent, {
+      data: {
+        dialogType: DialogTypes.Confirmation,
+        dialogTitle: 'Delete quick note',
+        dialogText: 'Are you sure you want to delete this quick note?',
+        dialogActionRecord: {
+          positiveConfirmation: 'Yes',
+          negativeConfirmation: 'No'
+        }
+      }
+    });
+
+    matDialogRef.afterClosed().subscribe((confirmation) => {
+      if(!confirmation) {
+        return;
+      }
+      this.localStorageTransactionService.deleteQuickNote(this.idOfSelectedQuickNote());
+      this.setDefaultQuickNoteData();
+    });
   }
 
   private setQuickNoteData(quickNoteId: number, index: number, note: string, count?: number) {
@@ -105,6 +132,9 @@ export class AppComponent implements OnInit {
     if(quickNote) {
       this.setQuickNoteData(quickNote.id, index, quickNote.note, count);
       this.displayQuickNotePositionText.set(`${this.currentIndex()+1}/${this.totalQuickNotes()}`);
+      return;
     }
+    this.setQuickNoteData(0, index, '',  -1);
+    this.displayQuickNotePositionText.set('0/0');
   }
 }

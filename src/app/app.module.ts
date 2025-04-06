@@ -13,11 +13,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatIconModule } from '@angular/material/icon';
-
+import { MatDialogModule } from '@angular/material/dialog';
+import { DialogViewComponent } from '../shared/components/dialog-view/dialog-view.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    DialogViewComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,6 +34,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatDividerModule,
     MatBadgeModule,
     MatIconModule,
+    MatDialogModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

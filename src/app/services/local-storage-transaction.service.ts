@@ -50,6 +50,18 @@ export class LocalStorageTransactionService {
     return {index: quickNoteIndex, quickNote: data.quickNotes[quickNoteIndex], count: data.quickNotes.length };
   }
 
+  public deleteQuickNote(id: number) {
+    const data = this.getDataFromLocalStorage();
+    const index = data.quickNotes.findIndex(quickNote => quickNote.id === id);
+    data.quickNotes.splice(index, 1);
+    if(data.quickNotes.length !== 0) {
+      const previousOrNextIndex = index === 0 ? index : index - 1;
+      data.selectedQuickNoteId = data.quickNotes[previousOrNextIndex].id;
+    }
+    const updatedStringifiedData = JSON.stringify(data);
+    localStorage.setItem(appName, updatedStringifiedData);
+  }
+
   public getDataFromLocalStorage(): Rage {
     return JSON.parse(localStorage.getItem(appName) as string) as Rage;
   }

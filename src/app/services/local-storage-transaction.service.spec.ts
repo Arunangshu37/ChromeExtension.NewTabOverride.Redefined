@@ -126,6 +126,7 @@ describe('LocalStorageTransactionService', () => {
       service.saveQuickNote(new QuickNote('Test note', 0));
 
       expect(setItemMethodSpy).toHaveBeenCalledOnceWith(appName, JSON.stringify(actualDataToGetSaved));
+      jasmine.clock().uninstall();
     });
 
     it('should update quick note', () => {
@@ -155,6 +156,78 @@ describe('LocalStorageTransactionService', () => {
       service.saveQuickNote(new QuickNote('Test note updated', testId));
 
       expect(setItemMethodSpy).toHaveBeenCalledOnceWith(appName, JSON.stringify(actualDataToGetSaved));
+    });
+  });
+
+  describe('deleteQuickNote', () => {
+    const data = {
+      appName: 'test app name',
+      quickNotes: [
+        {
+          id: 1,
+          note: 'Test note 0',
+          state: 'active'
+        },
+        {
+          id: 2,
+          note: 'Test note 1',
+          state: 'active'
+        },
+        {
+          id: 3,
+          note: 'Test note 2',
+          state: 'archived'
+        },
+      ],
+      selectedQuickNoteId: 1
+    };
+    it('should delete first quick note based on the id passed ', () => {
+
+      spyOn(window.localStorage, 'getItem').withArgs(appName).and.returnValue(JSON.stringify(data));
+      const setItemSpy = spyOn(window.localStorage, 'setItem');
+      service.deleteQuickNote(1);
+
+      const expectedData = {
+        appName: 'test app name',
+        quickNotes: [
+          {
+            id: 2,
+            note: 'Test note 1',
+            state: 'active'
+          },
+          {
+            id: 3,
+            note: 'Test note 2',
+            state: 'archived'
+          },
+        ],
+        selectedQuickNoteId: 2
+      };
+      expect(setItemSpy).toHaveBeenCalledWith(appName, JSON.stringify(expectedData));
+
+    });
+    it('should delete last quick note based on the id passed ', () => {
+      spyOn(window.localStorage, 'getItem').withArgs(appName).and.returnValue(JSON.stringify(data));
+      const setItemSpy = spyOn(window.localStorage, 'setItem');
+      service.deleteQuickNote(3);
+
+      const expectedData = {
+        appName: 'test app name',
+        quickNotes: [
+          {
+            id: 1,
+            note: 'Test note 0',
+            state: 'active'
+          },
+          {
+            id: 2,
+            note: 'Test note 1',
+            state: 'active'
+          }
+        ],
+        selectedQuickNoteId: 2
+      };
+      expect(setItemSpy).toHaveBeenCalledWith(appName, JSON.stringify(expectedData));
     });
   });
 });

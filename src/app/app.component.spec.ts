@@ -4,6 +4,7 @@ import { AppComponent } from './app.component';
 import { AppModule } from './app.module';
 import { LocalStorageTransactionService } from './services/local-storage-transaction.service';
 import { QuickNote, QuickNoteSaveStates } from './models/quick-notes.models';
+import { timeToWaitForNextKeyStrokeInMilliseconds } from '../shared/constants';
 
 describe('AppComponent', () => {
   let localStorageTransactionServiceMock: jasmine.SpyObj<LocalStorageTransactionService>;
@@ -59,7 +60,7 @@ describe('AppComponent', () => {
     expect(app.isSaving).toEqual(QuickNoteSaveStates.Saving);
 
     fixture.detectChanges();
-    tick(900);
+    tick(timeToWaitForNextKeyStrokeInMilliseconds);
     fixture.detectChanges();
 
     expect(app.isSaving).toEqual(QuickNoteSaveStates.Saved);
@@ -69,7 +70,7 @@ describe('AppComponent', () => {
     expect(app.displayQuickNotePositionText()).toEqual('1/1');
   }));
 
-  it(`should searchQueryInput value change search quick notes based on value in 1000 milliseconds'`, fakeAsync(() => {
+  it(`should searchQueryInput value change search quick notes based on value in 900 milliseconds'`, fakeAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const testVal = 'Test quick note';
     const idOfQuickNote = new Date().getTime();
@@ -101,7 +102,7 @@ describe('AppComponent', () => {
     app.ngOnInit();
     app.searchQueryInput.setValue('Test');
     fixture.detectChanges();
-    tick(1000);
+    tick(timeToWaitForNextKeyStrokeInMilliseconds);
     fixture.detectChanges();
 
 
@@ -127,7 +128,7 @@ describe('AppComponent', () => {
     app.searchQueryInput.setValue('');
 
     fixture.detectChanges();
-    tick(1000);
+    tick(timeToWaitForNextKeyStrokeInMilliseconds);
     fixture.detectChanges();
 
     expect(app.quickNotesClone().length).toEqual(0);

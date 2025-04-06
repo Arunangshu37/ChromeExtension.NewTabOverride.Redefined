@@ -4,6 +4,7 @@ import { debounceTime, filter, tap } from 'rxjs';
 import { assigned } from '../shared/utils';
 import { QuickNote, QuickNoteSaveStates } from './models/quick-notes.models';
 import { LocalStorageTransactionService } from './services/local-storage-transaction.service';
+import { timeToWaitForNextKeyStrokeInMilliseconds } from '../shared/constants';
 
 @Component({
   selector: 'app-root',
@@ -62,7 +63,7 @@ export class AppComponent {
       tap(() => {
         this.isSaving = QuickNoteSaveStates.Saving;
       }),
-      debounceTime(900),
+      debounceTime(timeToWaitForNextKeyStrokeInMilliseconds),
       filter((value) => {
         if(!assigned(value)) {
           this.isSaving = QuickNoteSaveStates.None;
@@ -80,7 +81,7 @@ export class AppComponent {
 
   private initializeSearchQueryValueChangeAction() {
     this.searchQueryInput.valueChanges.pipe(
-      debounceTime(1000),
+      debounceTime(timeToWaitForNextKeyStrokeInMilliseconds),
       filter((value) => {
         const isValueAssigned = assigned(value);
         if(!isValueAssigned) {

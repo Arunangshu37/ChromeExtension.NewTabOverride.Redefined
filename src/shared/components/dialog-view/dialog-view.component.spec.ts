@@ -30,7 +30,7 @@ describe('DialogViewComponent', () => {
         {provide: MAT_DIALOG_DATA, useValue: mockMatDialogData },
       ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(DialogViewComponent);
     component = fixture.componentInstance;

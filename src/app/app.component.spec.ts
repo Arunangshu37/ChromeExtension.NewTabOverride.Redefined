@@ -9,7 +9,6 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogViewComponent } from '../shared/components/dialog-view/dialog-view.component';
 import { of } from 'rxjs';
 import { DialogTypes } from '../shared/models/dialog-types.enum';
-import { DialogData } from '../shared/models/dialog-data.model';
 
 describe('AppComponent', () => {
   let mockLocalStorageTransactionService: jasmine.SpyObj<LocalStorageTransactionService>;

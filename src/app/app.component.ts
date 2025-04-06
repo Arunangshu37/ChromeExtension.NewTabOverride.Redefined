@@ -8,7 +8,6 @@ import { timeToWaitForNextKeyStrokeInMilliseconds } from '../shared/constants';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogViewComponent } from '../shared/components/dialog-view/dialog-view.component';
 import { DialogTypes } from '../shared/models/dialog-types.enum';
-import { DialogData } from '../shared/models/dialog-data.model';
 
 @Component({
   selector: 'app-root',

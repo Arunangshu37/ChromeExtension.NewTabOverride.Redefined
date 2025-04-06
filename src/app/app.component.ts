@@ -11,8 +11,7 @@ import { LocalStorageTransactionService } from './services/local-storage-transac
   standalone: false,
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit{
-  title = 'Angular app';
+export class AppComponent {
   public quickNoteSaveStates = QuickNoteSaveStates;
   public isSaving = QuickNoteSaveStates.None;
   public quickNoteInput = new FormControl('');

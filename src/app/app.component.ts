@@ -12,7 +12,7 @@ import { timeToWaitForNextKeyStrokeInMilliseconds } from '../shared/constants';
   standalone: false,
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   public quickNoteSaveStates = QuickNoteSaveStates;
   public isSaving = QuickNoteSaveStates.None;
   public quickNoteInput = new FormControl('');
